@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MAX — Мессенджер нового поколения</title>
     <style>
+        /* Запрет выделения текста и вызова контекстного меню */
+html, body {
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Общий стандарт */
+    -webkit-touch-callout: none; /* Запрет системного меню на iOS/Android при долгом нажатии */
+}
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
