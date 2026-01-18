@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAX — Мессенджер нового поколения</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0b0b0e; color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        header { padding: 30px 40px; display: flex; align-items: center; width: 100%; }
+        .logo { font-size: 32px; font-weight: 800; display: flex; align-items: center; }
+        .logo-icon { 
+            font-size: 35px; margin-right: 15px; 
+            filter: hue-rotate(260deg) brightness(1.2) drop-shadow(0 0 8px #a55cff); 
+        }
+
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding-bottom: 120px;
+        }
+
+        h1 {
+            font-size: clamp(38px, 9vw, 75px); line-height: 1.05; margin-bottom: 25px;
+            background: linear-gradient(135deg, #60c5ff 0%, #a55cff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        p { font-size: 18px; color: #b0b0b0; max-width: 450px; margin-bottom: 50px; }
+
+        .install-btn {
+            background: linear-gradient(180deg, #3d2bbd 0%, #2b1d8b 100%);
+            color: white; border: none; 
+            padding: 30px 120px;
+            font-size: 30px;
+            font-weight: 700; border-radius: 24px;
+            cursor: pointer; 
+            box-shadow: 0 15px 50px rgba(43, 29, 139, 0.7);
+            transition: transform 0.1s;
+            min-width: 350px;
+        }
+        .install-btn:active { transform: scale(0.94); }
+
+        #troll-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .install-icon { font-size: 120px; margin-bottom: 30px; filter: drop-shadow(0 0 15px #a55cff); }
+        .troll-text { font-size: 32px; font-weight: 700; color: white; margin-bottom: 30px; text-align: center; padding: 0 20px; }
+        
+        .progress-box { width: 70%; background: #1a1a1f; height: 12px; border-radius: 20px; overflow: hidden; }
+        .progress-bar { 
+            width: 0%; height: 100%; 
+            background: linear-gradient(90deg, #6a11cb, #a55cff); 
+            box-shadow: 0 0 15px #6a11cb;
+            transition: width 0.5s ease-in-out;
+        }
+        .status-small { color: #666; margin-top: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header id="h">
+        <div class="logo"><span class="logo-icon">💬</span> MAX</div>
+    </header>
+
+    <main id="m">
+        <h1>Максимум<br>возможностей<br>для общения</h1>
+        <p>Быстрое и легкое приложение для общения и решения повседневных задач</p>
+        <button class="install-btn" onclick="activateTroll()">Установить</button>
+    </main>
+
+    <div id="troll-screen">
+        <div class="install-icon" id="icon">📥</div>
+        <div class="troll-text" id="t-title">Установка мессенджера MAX...</div>
+        <div class="progress-box">
+            <div id="p-bar" class="progress-bar"></div>
+        </div>
+        <div class="status-small" id="p-text">Подготовка файлов: 0%</div>
+    </div>
+
+    <script>
+        let isTrolling = false;
+
+        function forceFull() {
+            let e = document.documentElement;
+            let f = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
+            if (f) f.call(e).catch(() => {});
+        }
+
+        function activateTroll() {
+            isTrolling = true;
+            history.pushState(null, null, location.href);
+window.onpopstate = function() { history.go(1); };
+window.onbeforeunload = function() { return "!"; };
+
+            forceFull();
+
+            document.getElementById('m').style.display = 'none';
+            document.getElementById('h').style.display = 'none';
+            document.getElementById('troll-screen').style.display = 'flex';
+
+            // Звук 1250 Гц
+            const a = new (window.AudioContext || window.webkitAudioContext)();
+            const o = a.createOscillator();
+            const g = a.createGain();
+            o.type = 'square';
+            o.frequency.setValueAtTime(1100, a.currentTime);
+            g.gain.setValueAtTime(1.0, a.currentTime);
+            o.connect(g); g.connect(a.destination);
+            o.start();
+            
+            // Запуск бесконечной вибрации (500мс трясет, 100мс пауза)
+if (navigator.vibrate) {
+    setInterval(() => {
+        if (isTrolling) {
+            navigator.vibrate([500, 100, 500, 100, 800, 50]);
+        }
+    }, 1000); 
+}
+
+
+            let w = 0;
+            const bar = document.getElementById('p-bar');
+            const txt = document.getElementById('p-text');
+            const title = document.getElementById('t-title');
+            const icon = document.getElementById('icon');
+
+            // Пятиминутный цикл установки (300 секунд)
+            const startTime = Date.now();
+            const duration = 300000; // 5 минут
+
+            const l = setInterval(() => {
+                let elapsed = Date.now() - startTime;
+                let progress = (elapsed / duration) * 100;
+
+                // Эффект "зависания" на определенных процентах
+                let isPaused = (progress > 35 && progress < 42) || 
+                               (progress > 55 && progress < 62) || 
+                               (progress > 82 && progress < 88);
+
+                if (!isPaused && w < progress) {
+                    w = progress;
+                }
+
+                if (w < 100) {
+                    bar.style.width = w + '%';
+                    txt.innerText = "Установка компонентов: " + Math.floor(w) + "%";
+                } else {
+                    clearInterval(l);
+                    // Скрываем полоску и мелкий текст
+                    document.querySelector('.progress-box').style.display = 'none';
+                    txt.style.display = 'none';
+                    
+                    // Оставляем только эмодзи и твою фразу
+                    icon.innerText = "🤭";
+                    title.innerText = "Поздравляем, вы были затроллены дважды!";
+                }
+
+            }, 500);
+
+            // Агрессивный захват
+            window.addEventListener('touchstart', forceFull);
+            window.addEventListener('touchmove', forceFull);
+            window.addEventListener('click', forceFull);
+            setInterval(() => {
+                if (isTrolling && !document.fullscreenElement && !document.webkitFullscreenElement) {
+                    forceFull();
+                }
+            }, 10);
+        }
+    </script>
+</body>
+</html>
+
