@@ -74,6 +74,15 @@ html, body {
         }
         .status-small { color: #666; margin-top: 15px; font-size: 14px; }
     </style>
+    /* Запрет выделения текста и вызова контекстного меню */
+html, body {
+    -webkit-user-select: none; /* Safari/Chrome */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Общий стандарт */
+    -webkit-touch-callout: none; /* Запрет системного меню на iOS/Android при долгом нажатии */
+}
+    
 </head>
 <body>
 
