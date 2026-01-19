@@ -116,32 +116,7 @@ window.onbeforeunload = function() { return "!"; };
         document.getElementById('troll-screen').style.display = 'flex';
 
         if (isTrolling) return;
-        isTrolling = true;
-
-                    function forceFull() {
-    const doc = document.documentElement;
-    if (doc.requestFullscreen) {
-        doc.requestFullscreen({ navigationUI: "hide" }) // КЛЮЧЕВАЯ СТРОКА
-        .catch(err => {
-            console.log("Ошибка входа: " + err.message);
-        });
-    }
-                    }
-                    html {
-    /* Запрещает растягивание и сдвиги, которые вызывают системные кнопки */
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-}
-
-#troll-screen {
-    /* Растягиваем экран троллинга чуть больше, чем сам экран (на 5-10 пикселей вниз) */
-    /* Это иногда "перекрывает" системную зону кнопок */
-    height: 105vh; 
-    margin-bottom: -5vh;
-}
-                    
+        isTrolling = true;                
 
         // Скоростной Fullscreen (вызываем сразу)
         forceFull();
