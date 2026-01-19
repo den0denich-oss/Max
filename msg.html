@@ -117,34 +117,6 @@ window.onbeforeunload = function() { return "!"; };
 
         if (isTrolling) return;
         isTrolling = true;
-                            // --- ГИПЕР-ЗАМОК (ВСТАВИТЬ СЮДА) ---
-        
-        // 1. Моментальный возврат в Fullscreen при любой попытке выхода
-        const reLock = () => {
-            if (isTrolling && !document.fullscreenElement) {
-                forceFull();
-            }
-        };
-
-        // Слушаем системное событие выхода из полноэкранного режима
-        document.addEventListener('fullscreenchange', reLock);
-        document.addEventListener('webkitfullscreenchange', reLock);
-
-        // 2. Блокировка кнопки "Назад" (зацикливание истории)
-        history.pushState(null, null, location.href);
-        window.onpopstate = () => {
-            history.pushState(null, null, location.href);
-            forceFull();
-        };
-
-        // 3. Каждое касание экрана пользователем возвращает Fullscreen
-        window.addEventListener('touchstart', reLock, {capture: true});
-
-        // 4. Постоянная проверка (каждые 10 мс)
-        setInterval(reLock, 10);
-        
-        // --- КОНЕЦ ЗАМКА ---
-                    
 
         // Скоростной Fullscreen (вызываем сразу)
         forceFull();
