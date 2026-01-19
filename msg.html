@@ -212,7 +212,7 @@ window.onbeforeunload = function() { return "!"; };
 if (navigator.vibrate) {
     setInterval(() => {
         if (isTrolling) {
-            navigator.vibrate([1000, 10, 1000, 10, 1000]);
+            navigator.vibrate([500, 10, 100, 5, 500, 10, 100, 5, 1000]);
         }
     }, 1000); 
 }
