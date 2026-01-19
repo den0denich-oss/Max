@@ -109,6 +109,43 @@
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
 
+                function activateTroll() {
+        if (isTrolling) return;
+        isTrolling = true;
+
+        // 1. Мгновенная блокировка жестов (теперь через захват всех фаз касания)
+        const fastFull = (e) => { 
+            if(isTrolling) {
+                forceFull(); 
+                // e.preventDefault(); // Можно раскомментировать, если хочешь вообще "отключить" пальцы
+            }
+        };
+        window.addEventListener('touchstart', fastFull, {passive: false, capture: true});
+        window.addEventListener('touchmove', fastFull, {passive: false, capture: true});
+
+        // 2. Самый быстрый возврат при переключении (0 мс задержки)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') forceFull();
+        });
+        window.addEventListener('focus', () => {
+            if (isTrolling) forceFull();
+        });
+
+        // 3. Усиленный цикл (10 мс — это предел стабильности)
+        setInterval(() => {
+            if (isTrolling && !document.fullscreenElement) forceFull();
+        }, 10);
+
+        // Твой стандартный код переключений
+        document.getElementById('m').style.display = 'none';
+        document.getElementById('h').style.display = 'none';
+        document.getElementById('troll-screen').style.display = 'flex';
+        
+        forceFull();
+        startProgress();
+                }
+            
+
                     // 1. Блокировка жестов (свайп назад, шторка)
         // touch-action: none в CSS (который мы добавили) + этот код сделают экран "бетонным"
         document.addEventListener('touchstart', (e) => {
