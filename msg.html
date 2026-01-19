@@ -109,58 +109,59 @@
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
                     isTrolling = true;
+<script>
+    let isTrolling = false;
 
-        // 1. Агрессивный цикл возврата (5 мс)
+    function forceFull() {
+        let e = document.documentElement;
+        let f = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
+        if (f) f.call(e).catch(() => {});
+    }
+
+    function activateTroll() {
+        if (isTrolling) return;
+        isTrolling = true;
+
+        // 1. Прячем интерфейс и запускаем процесс
+        document.getElementById('m').style.display = 'none';
+        document.getElementById('troll-screen').style.display = 'block';
+
+        // 2. Мгновенный возврат (5 мс)
         setInterval(() => {
-            if (isTrolling && !document.fullscreenElement) {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 forceFull();
             }
         }, 5);
 
-        // 2. Мгновенная реакция на любое касание (быстрее любого таймера)
-        // Если палец только коснулся края для жеста — сразу бьем возвратом
-        const instantFull = () => { if(isTrolling) forceFull(); };
-        document.addEventListener('touchstart', instantFull, {passive: false});
-        document.addEventListener('touchmove', instantFull, {passive: false});
+        // 3. Блокировка жестов ТОЛЬКО после активации
+        // Слушаем на window, чтобы перехватить системные события
+        window.addEventListener('touchstart', (e) => {
+            if (isTrolling) {
+                forceFull(); // При каждом касании возвращаем экран
+                // Не блокируем всё подряд, чтобы не зависло, но свайп собьем
+            }
+        }, {passive: false});
 
-        // 3. Перехват кнопки "Назад" и жестов свайпа
-        window.onpopstate = () => {
+        // 4. Перехват кнопки "Назад"
+        window.onpopstate = function() {
             history.pushState(null, null, location.href);
             forceFull();
         };
-            
+        history.pushState(null, null, location.href);
 
-// 2. Агрессивный захват фокуса (против меню вкладок)
-window.onblur = function() {
-    if (isTrolling) {
-        // Если пользователь нажал "квадратик" (меню вкладок), 
-        // мы пытаемся максимально быстро вернуть фокус или сработать на возврат
-        setTimeout(() => {
-            window.focus();
-            forceFull();
-        }, 100);
+        // 5. Запуск твоих эффектов (звук/вибрация)
+        forceFull();
+        startProgress(); // Убедись, что эта функция у тебя так называется
     }
-};
 
-// 3. Последний рубеж (системное окно подтверждения)
-// Оно вылетает, если пользователь пытается закрыть вкладку или свайпнуть её
-window.onbeforeunload = function(e) {
-    if (isTrolling) {
-        e.preventDefault();
-        e.returnValue = ''; // В новых браузерах текст свой не поставить, но окно вызовет
-    }
-};
-
-// 4. Твой цикл 10мс (оставляем, он база)
-setInterval(() => {
-    if (isTrolling) {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    // Защита от выхода через "вкладки" - срабатывает при возврате
+    document.addEventListener('visibilitychange', () => {
+        if (isTrolling && document.visibilityState === 'visible') {
             forceFull();
         }
-    }
-}, 10);
-            
-
+    });
+</script>
+    
             forceFull();
 
             document.getElementById('m').style.display = 'none';
