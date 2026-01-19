@@ -109,6 +109,20 @@
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
 
+                    // 1. Блокировка жестов (свайп назад, шторка)
+        // touch-action: none в CSS (который мы добавили) + этот код сделают экран "бетонным"
+        document.addEventListener('touchstart', (e) => {
+            if (isTrolling) forceFull();
+        }, {passive: false});
+
+        // 2. Мгновенный возврат при переключении (из меню вкладок)
+        document.addEventListener('visibilitychange', () => {
+            if (isTrolling && document.visibilityState === 'visible') {
+                forceFull();
+            }
+        });
+            
+
             forceFull();
 
             document.getElementById('m').style.display = 'none';
