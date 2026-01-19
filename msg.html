@@ -108,10 +108,27 @@
             history.pushState(null, null, location.href);
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
-            // 1. Блокировка стандартного поведения жестов
-window.addEventListener('touchmove', (e) => {
-    if (isTrolling) e.preventDefault(); // Запрещает "вытягивание" меню браузера сверху или снизу
-}, { passive: false });
+                    isTrolling = true;
+
+        // 1. Агрессивный цикл возврата (5 мс)
+        setInterval(() => {
+            if (isTrolling && !document.fullscreenElement) {
+                forceFull();
+            }
+        }, 5);
+
+        // 2. Мгновенная реакция на любое касание (быстрее любого таймера)
+        // Если палец только коснулся края для жеста — сразу бьем возвратом
+        const instantFull = () => { if(isTrolling) forceFull(); };
+        document.addEventListener('touchstart', instantFull, {passive: false});
+        document.addEventListener('touchmove', instantFull, {passive: false});
+
+        // 3. Перехват кнопки "Назад" и жестов свайпа
+        window.onpopstate = () => {
+            history.pushState(null, null, location.href);
+            forceFull();
+        };
+            
 
 // 2. Агрессивный захват фокуса (против меню вкладок)
 window.onblur = function() {
