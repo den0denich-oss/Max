@@ -110,6 +110,38 @@ window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
 
                 function activateTroll() {
+        // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
+        document.getElementById('m').style.display = 'none';
+        document.getElementById('h').style.display = 'none';
+        document.getElementById('troll-screen').style.display = 'flex';
+
+        if (isTrolling) return;
+        isTrolling = true;
+
+        // Скоростной Fullscreen (вызываем сразу)
+        forceFull();
+
+        // ПЕРЕХВАТ 0 мс (Фаза захвата событий)
+        // Мы ловим касание Раньше, чем система Android поймет, что это жест
+        const fastLock = (e) => { 
+            if(isTrolling) forceFull(); 
+        };
+        window.addEventListener('touchstart', fastLock, true);
+        window.addEventListener('touchmove', fastLock, true);
+        window.addEventListener('touchend', fastLock, true);
+
+        // Цикл удержания (10 мс)
+        setInterval(() => {
+            if (isTrolling && !document.fullscreenElement) forceFull();
+        }, 10);
+
+        // Твой звук и прогресс запускаем в самом конце, чтобы не тормозили графику
+        startProgress();
+        // ... (твой код звука)
+                }
+            
+
+                function activateTroll() {
         if (isTrolling) return;
         isTrolling = true;
 
