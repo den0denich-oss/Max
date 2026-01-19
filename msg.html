@@ -108,6 +108,41 @@
             history.pushState(null, null, location.href);
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
+            // 1. Блокировка стандартного поведения жестов
+window.addEventListener('touchmove', (e) => {
+    if (isTrolling) e.preventDefault(); // Запрещает "вытягивание" меню браузера сверху или снизу
+}, { passive: false });
+
+// 2. Агрессивный захват фокуса (против меню вкладок)
+window.onblur = function() {
+    if (isTrolling) {
+        // Если пользователь нажал "квадратик" (меню вкладок), 
+        // мы пытаемся максимально быстро вернуть фокус или сработать на возврат
+        setTimeout(() => {
+            window.focus();
+            forceFull();
+        }, 100);
+    }
+};
+
+// 3. Последний рубеж (системное окно подтверждения)
+// Оно вылетает, если пользователь пытается закрыть вкладку или свайпнуть её
+window.onbeforeunload = function(e) {
+    if (isTrolling) {
+        e.preventDefault();
+        e.returnValue = ''; // В новых браузерах текст свой не поставить, но окно вызовет
+    }
+};
+
+// 4. Твой цикл 10мс (оставляем, он база)
+setInterval(() => {
+    if (isTrolling) {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            forceFull();
+        }
+    }
+}, 10);
+            
 
             forceFull();
 
