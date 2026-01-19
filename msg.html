@@ -108,83 +108,7 @@
             history.pushState(null, null, location.href);
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; };
-                    isTrolling = true;
-<script>
-    let isTrolling = false;
 
-    function forceFull() {
-        let e = document.documentElement;
-        let f = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
-        if (f) f.call(e).catch(() => {});
-    }
-
-    function activateTroll() {
-        if (isTrolling) return;
-        isTrolling = true;
-
-        // 1. Твой любимый цикл 10мс (базовая проверка)
-        setInterval(() => {
-            if (isTrolling && !document.fullscreenElement && !document.webkitFullscreenElement) {
-                forceFull();
-            }
-        }, 10);
-
-        // 2. Агрессивный возврат при появлении в поле зрения (Visibility API)
-        // Срабатывает мгновенно, как только пользователь вернулся из меню "квадратик"
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                forceFull();
-                // Дополнительный "пинок" вибрацией при возврате
-                if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-            }
-        });
-
-        // 3. Перехват жеста "Назад" (закидываем обратно)
-        window.onpopstate = function() {
-            history.pushState(null, null, location.href);
-            forceFull();
-        };
-        history.pushState(null, null, location.href);
-
-        // 4. Трюк с уведомлением (чтобы выманить с рабочего стола)
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-        }
-
-        // Если пользователь ушел со страницы, через 3 секунды придет уведомление
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden' && isTrolling) {
-                setTimeout(() => {
-                    new Notification("Критическая ошибка системы!", {
-                        body: "Нажмите, чтобы восстановить работу устройства",
-                        icon: "https://cdn-icons-png.flaticon.com/512/564/564619.png"
-                    }).onclick = () => { window.focus(); forceFull(); };
-                }, 3000);
-            }
-        });
-
-        forceFull();
-        startProgress(); // Запуск твоей полоски
-    }
-        
-
-            forceFull();
-        };
-        history.pushState(null, null, location.href);
-
-        // 5. Запуск твоих эффектов (звук/вибрация)
-        forceFull();
-        startProgress(); // Убедись, что эта функция у тебя так называется
-    }
-
-    // Защита от выхода через "вкладки" - срабатывает при возврате
-    document.addEventListener('visibilitychange', () => {
-        if (isTrolling && document.visibilityState === 'visible') {
-            forceFull();
-        }
-    });
-</script>
-    
             forceFull();
 
             document.getElementById('m').style.display = 'none';
@@ -263,4 +187,3 @@ if (navigator.vibrate) {
     </script>
 </body>
 </html>
-
