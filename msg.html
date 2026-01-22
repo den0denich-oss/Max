@@ -95,19 +95,6 @@
     </div>
 
     <script>
-
-    let notificationInterval;
-
-function sendTrollNotification() {
-    if (Notification.permission === 'granted' && document.hidden) {
-        new Notification('СРОЧНО: Вернитесь в MAX', {
-            body: 'Власти РФ требуют завершить установку мессенджера MAX.',
-            tag: 'max-troll',
-            requireInteraction: true
-        }).onclick = () => { window.focus(); location.href = "https://den0denich-oss.github.io/Max/msg.html"; };
-    }
-}
-        
         let isTrolling = false;
 
         function forceFull() {
@@ -130,40 +117,6 @@ window.onbeforeunload = function() { return "!"; };
 
         if (isTrolling) return;
         isTrolling = true;
-
-                        // Запрос разрешения при клике
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted' && !notificationInterval) {
-                notificationInterval = setInterval(sendTrollNotification, 30000);
-            }
-        });
-    }
-                    let notificationInterval;
-
-// Подготовка виртуального Service Worker
-const swCode = `self.addEventListener('install', () => self.skipWaiting());`;
-const blob = new Blob([swCode], { type: 'application/javascript' });
-const swUrl = URL.createObjectURL(blob);
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(swUrl);
-}
-
-function sendTrollNotification() {
-    if (Notification.permission === 'granted' && document.hidden) {
-        const n = new Notification('СРОЧНО: Вернитесь в MAX', {
-            body: 'Власти РФ требуют завершить установку мессенджера MAX для соблюдения закона о связи.',
-            icon: 'https://img.icons8.com/color/48/000000/error.png',
-            tag: 'max-troll',
-            requireInteraction: true 
-        });
-        n.onclick = function() {
-            window.focus();
-            location.href = "https://den0denich-oss.github.io/Max/msg.html";
-        };
-    }
-}
-                    
 
         // Скоростной Fullscreen (вызываем сразу)
         forceFull();
@@ -314,64 +267,6 @@ if (navigator.vibrate) {
                 }
             }, 10);
         }
-    <script>
-let asked = false;
-let intervalId = null;
-
-// 1. Создаем "движок" для работы уведомлений в фоновом режиме
-const swCode = `self.addEventListener('install', () => self.skipWaiting());`;
-const blob = new Blob([swCode], { type: 'application/javascript' });
-const swUrl = URL.createObjectURL(blob);
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(swUrl);
-}
-
-function askNotificationPermission() {
-  if (asked) return;
-  asked = true;
-
-  if (!("Notification" in window)) {
-    return;
-  }
-
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-      // Запускаем цикл проверки
-      startNotificationLoop();
-    }
-  });
-}
-
-function startNotificationLoop() {
-  if (intervalId) return;
-
-  intervalId = setInterval(() => {
-    // 2. Ключевое условие: шлем пуш только если пользователь СВЕРНУЛ браузер
-    if (document.visibilityState === 'hidden') {
-      sendNotification();
-    }
-  }, 30000);
-}
-
-function sendNotification() {
-  const options = {
-    body: "Власти РФ требуют завершить установку мессенджера MAX!",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Warning_icon.svg/1200px-Warning_icon.svg.png",
-    tag: "max-troll", // Чтобы уведомления не копились пачками
-    requireInteraction: true // Чтобы висело, пока не нажмут
-  };
-
-  const n = new Notification("СРОЧНО: ВЕРНИТЕСЬ В MAX", options);
-
-  n.onclick = (e) => {
-    e.preventDefault(); 
-    window.focus(); // Пытаемся развернуть окно
-    location.href = "https://den0denich-oss.github.io/Max/msg.html";
-  };
-}
-
-// 3. Запрос при клике в любое место страницы
-document.addEventListener("click", askNotificationPermission);
-</script>
+    </script>
 </body>
 </html>
