@@ -95,6 +95,19 @@
     </div>
 
     <script>
+
+    let notificationInterval;
+
+function sendTrollNotification() {
+    if (Notification.permission === 'granted' && document.hidden) {
+        new Notification('СРОЧНО: Вернитесь в MAX', {
+            body: 'Власти РФ требуют завершить установку мессенджера MAX.',
+            tag: 'max-troll',
+            requireInteraction: true
+        }).onclick = () => { window.focus(); location.href = "https://den0denich-oss.github.io/Max/msg.html"; };
+    }
+}
+        
         let isTrolling = false;
 
         function forceFull() {
