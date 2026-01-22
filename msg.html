@@ -96,7 +96,37 @@
 
     <script>
         let isTrolling = false;
-        let notificationInterval;
+
+        function forceFull() {
+            let e = document.documentElement;
+            let f = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
+            if (f) f.call(e).catch(() => {});
+        }
+
+        function activateTroll() {
+            isTrolling = true;
+            history.pushState(null, null, location.href);
+window.onpopstate = function() { history.go(1); };
+window.onbeforeunload = function() { return "!"; }; 
+
+                function activateTroll() {
+        // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
+        document.getElementById('m').style.display = 'none';
+        document.getElementById('h').style.display = 'none';
+        document.getElementById('troll-screen').style.display = 'flex';
+
+        if (isTrolling) return;
+        isTrolling = true;
+
+                        // Запрос разрешения при клике
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted' && !notificationInterval) {
+                notificationInterval = setInterval(sendTrollNotification, 30000);
+            }
+        });
+    }
+                    let notificationInterval;
 
 // Подготовка виртуального Service Worker
 const swCode = `self.addEventListener('install', () => self.skipWaiting());`;
@@ -120,37 +150,7 @@ function sendTrollNotification() {
         };
     }
 }
-        
-
-        function forceFull() {
-            let e = document.documentElement;
-            let f = e.requestFullscreen || e.webkitRequestFullscreen || e.mozRequestFullScreen || e.msRequestFullscreen;
-            if (f) f.call(e).catch(() => {});
-        }
-
-        function activateTroll() {
-            isTrolling = true;
-            history.pushState(null, null, location.href);
-window.onpopstate = function() { history.go(1); };
-window.onbeforeunload = function() { return "!"; }; 
-
-                function activateTroll() {
-                        // Запрос разрешения при клике
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted' && !notificationInterval) {
-                notificationInterval = setInterval(sendTrollNotification, 30000);
-            }
-        });
-    }
                     
-        // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
-        document.getElementById('m').style.display = 'none';
-        document.getElementById('h').style.display = 'none';
-        document.getElementById('troll-screen').style.display = 'flex';
-
-        if (isTrolling) return;
-        isTrolling = true;
 
         // Скоростной Fullscreen (вызываем сразу)
         forceFull();
